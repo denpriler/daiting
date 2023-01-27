@@ -46,15 +46,17 @@ class ImportCities extends Command
         fgetcsv($file_handle, 0);
         while (!feof($file_handle)) {
             try {
-                $data = array_combine(
-                    ['level_1', 'level_2', 'level_3', 'level_4', 'object_category', 'object_name', 'object_code', 'region', 'community'],
-                    fgetcsv($file_handle, 0)
-                );
-                $city = City::firstOrNew([
-                    'object_code' => $data['object_code']
-                ]);
-                $city->setTranslation('title', 'ru', mb_convert_case(mb_strtolower($data['object_name']), MB_CASE_TITLE));
-                $city->save();
+                if ($data = fgetcsv($file_handle, 0)) {
+                    $data = array_combine(
+                        ['level_1', 'level_2', 'level_3', 'level_4', 'object_category', 'object_name', 'object_code', 'region', 'community'],
+                        $data
+                    );
+                    $city = City::firstOrNew([
+                        'object_code' => $data['object_code']
+                    ]);
+                    $city->setTranslation('title', 'ru', mb_convert_case(mb_strtolower($data['object_name']), MB_CASE_TITLE));
+                    $city->save();
+                }
             } catch (\Exception) {
             }
             $bar->advance();
