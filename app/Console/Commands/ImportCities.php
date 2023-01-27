@@ -53,7 +53,7 @@ class ImportCities extends Command
                 $city = City::firstOrNew([
                     'object_code' => $data['object_code']
                 ]);
-                $city->setTranslation('title', 'ru', ucwords(strtolower($data['object_name'])));
+                $city->setTranslation('title', 'ru', mb_convert_case(mb_strtolower($data['object_name']), MB_CASE_TITLE));
                 $city->save();
             } catch (\Exception) {
             }
